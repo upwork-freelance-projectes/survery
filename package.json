@@ -8,8 +8,8 @@
 		"dev": "vite",
 		"build": "vite build",
 		"preview": "vite preview",
-		"predeploy": "npm run build",
-		"deploy": "gh-pages -d dist"
+		"pm2-setup": "pm2 deploy production setup",
+		"deploy": "pm2 deploy production"
 	},
 	"dependencies": {
 		"@headlessui/react": "^1.7.7",

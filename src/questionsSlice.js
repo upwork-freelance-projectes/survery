@@ -174,8 +174,7 @@ with the following statement:
 			};
 		},
 		setScores: (state, action) => {
-			console.log(action.payload, "scoer");
-			// console.log(state.scores, "scoer");
+	
 
 			return {
 				...state,
@@ -184,15 +183,10 @@ with the following statement:
 						score => score.location == action.payload.location,
 					);
 
-					console.log(index, draft[index], "am index>>>>>>>>>>>>>>>");
+				
 
 					if (index !== -1) {
-						// console.log(
-						// 	index,
-
-						// 	action.payload,
-						// 	"alreday exist>>>>>>>>>>>>>>>>>>>>>>>>>",
-						// );
+					
 						if (draft[index].score !== action.payload.score)
 							draft[index].score = action.payload.score;
 					} else {
