@@ -15,16 +15,20 @@
 		"@headlessui/react": "^1.7.7",
 		"@heroicons/react": "^2.0.13",
 		"@reduxjs/toolkit": "^1.9.1",
+		"chart.js": "^4.1.2",
+		"chartjs-plugin-datalabels": "^2.2.0",
+		"faker": "^6.6.6",
 		"html2canvas": "^1.4.1",
 		"immer": "^9.0.17",
+		"jspdf": "^2.5.1",
 		"react": "^18.2.0",
+		"react-chartjs-2": "^5.2.0",
 		"react-dom": "^18.2.0",
 		"react-redux": "^8.0.5",
 		"react-router-dom": "^6.6.1",
 		"react-virtualized": "^9.22.3",
 		"react-vis": "^1.11.12",
-		"redux-persist": "^6.0.0",
-		"victory": "^36.6.8"
+		"redux-persist": "^6.0.0"
 	},
 	"devDependencies": {
 		"@tailwindcss/aspect-ratio": "^0.4.2",

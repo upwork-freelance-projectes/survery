@@ -110,7 +110,48 @@ with the following statement:
 				],
 			},
 		],
-		answers: [],
+		answers: [
+			{
+				location: "8",
+				answer: "Agree somewhat",
+				i: -1,
+			},
+			{
+				location: "7",
+				answer: "Very confident",
+				i: -1,
+			},
+			{
+				location: "6",
+				answer: "Very good",
+				i: -1,
+			},
+			{
+				location: "5",
+				answer: "Have a bit more debt than is manageable",
+				i: -1,
+			},
+			{
+				location: "4",
+				answer: "Moderately confident",
+				i: -1,
+			},
+			{
+				location: "3",
+				answer: "3-5 months",
+				i: -1,
+			},
+			{
+				location: "2",
+				answer: "Pay all of our bills on time",
+				i: -1,
+			},
+			{
+				location: "1",
+				answer: "Spending was a little less than income",
+				i: 1,
+			},
+		],
 		scores: [],
 	},
 
@@ -133,16 +174,37 @@ with the following statement:
 			};
 		},
 		setScores: (state, action) => {
-			console.log(action, "scoer");
+			console.log(action.payload, "scoer");
+			// console.log(state.scores, "scoer");
 
-			return { ...state, scores: [action.payload, ...state.scores] };
+			return {
+				...state,
+				scores: produce(state.scores, draft => {
+					const index = draft.findIndex(
+						score => score.location == action.payload.location,
+					);
+
+					console.log(index, draft[index], "am index>>>>>>>>>>>>>>>");
+
+					if (index !== -1) {
+						// console.log(
+						// 	index,
+
+						// 	action.payload,
+						// 	"alreday exist>>>>>>>>>>>>>>>>>>>>>>>>>",
+						// );
+						if (draft[index].score !== action.payload.score)
+							draft[index].score = action.payload.score;
+					} else {
+						draft.unshift(action.payload);
+					}
+				}),
+			};
+
+			// return { ...state, scores: [action.payload, ...state.scores] };
 		},
 	},
 });
-
-
-
-
 
 export const { setAnswers, updateAnswers, setScores } = questionSlice.actions;
 

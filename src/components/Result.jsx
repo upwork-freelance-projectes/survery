@@ -3,29 +3,86 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { score } from "../scoring";
 import html2canvas from "html2canvas";
-import {
-	VictoryPie,
-	VictoryAnimation,
-	VictoryLabel,
-	VictoryContainer,
-	VictoryChart,
-} from "victory";
+import { BarChart } from "./Bar";
 import { setScores } from "../questionsSlice";
 import {
 	RadialChart,
 	LabelSeries,
 	makeVisFlexible,
-	XYPlot,
-	XAxis,
-	YAxis,
-	VerticalGridLines,
-	HorizontalGridLines,
-	HorizontalBarSeries,
-	HorizontalBarSeriesCanvas,
 } from "react-vis";
-import AutoSizer from "react-virtualized/dist/commonjs/AutoSizer";
+import {
+	Chart as ChartJS,
+	CategoryScale,
+	LinearScale,
+	BarElement,
+	Title,
+	Tooltip,
+	Legend,
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+import { jsPDF } from "jspdf";
+
+ChartJS.register(
+	CategoryScale,
+	LinearScale,
+	BarElement,
+	Title,
+	Tooltip,
+	// Legend,
+	ChartDataLabels,
+);
+
+const options = {
+	responsive: true,
+	plugins: {
+		// legend: {
+		// 	position: "bottom",
+		// },
+		title: {
+			display: true,
+			text: "Sub scores",
+		},
+		datalabels: {
+			color: "black",
+		},
+	},
+	scales: {
+		x: {
+			border: {
+				display: false,
+			},
+			grid: {
+				display: false,
+			},
+		},
+		y: {
+			border: {
+				display: false,
+			},
+			grid: {
+				display: false,
+			},
+			ticks: {
+				display: false,
+			},
+		},
+	},
+	// categoryPercentage: 0.5, // notice here
+	// barPercentage: 0.5,
+};
+
+const labels = ["Spending", "Saving", "Borrowing", "Planing"];
+
+
+
+// export function BarChart({ scores }) {
+	
+// 	return <Bar options={options} data={data} />;
+// }
 
 function Result() {
+	const [results, setResults] = useState(false)
 	const ResponsiveChart = makeVisFlexible(RadialChart);
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -36,9 +93,9 @@ function Result() {
 	const { answers } = useSelector(state => state.questions);
 	const { progress } = useSelector(state => state.progress);
 	// const [clickedBack, setBack] = useState(false)
-	const [question, setQuestion] = useState({});
+	
 	const [prog, setProg] = useState(progress);
-	// console.log(answers, "ama sanasewr");
+	// console.log(scores, "result page");
 	const individualScores = [
 		{
 			y: 1,
@@ -62,6 +119,40 @@ function Result() {
 		},
 	];
 
+	const data = {
+		labels,
+		datasets: [
+			{
+				label: "Scores",
+				data: scores.length ? [
+					Math.round((scores[0].score + scores[1].score) / 2),
+
+					Math.round((scores[2].score + scores[3].score) / 2),
+
+					Math.round((scores[4].score + scores[5].score) / 2),
+
+					Math.round((scores[6].score + scores[7].score) / 2),
+				] : [],
+				// backgroundColor: "rgb(121, 199, 227)",
+				backgroundColor: [
+					"rgb(255, 99, 132)",
+					"rgb(255, 159, 64)",
+					"rgb(255, 205, 86)",
+					"rgb(75, 192, 192)",
+					"rgb(54, 162, 235)",
+					"rgb(153, 102, 255)",
+					"rgb(201, 203, 207)",
+				],
+				// borderColor: "rgb(121, 199, 227)",
+				// borderWidth: 5,
+				// barThickness: 40,
+				// barPercentage: 0.5,
+				categoryPercentage: 0.5, // notice here
+				barPercentage: 0.5, // notice here
+			},
+		],
+	};
+
 	const individualLabels = individualScores.map((score, idx) => ({
 		x: `${score.label}             ${score.x}%`,
 		y: score.y,
@@ -75,20 +166,27 @@ function Result() {
 
 	useEffect(
 		params => {
-			setQuestion(questions[Number(location.pathname.charAt(1))]);
+			// score(answers, dispatch, setScores);
 			setProg(progress);
+
 			// : setQuestion(questions[2]);
-		},
-		[location],
-	);
+		});
 
 	function saveImage() {
 		var input = document.getElementById("canvas");
-		html2canvas(input).then(canvas => {
-			let imgData = canvas
-				.toDataURL("image/png")
-				.replace("image/png", "image/octet-stream");
-			downloadURL(imgData);
+		html2canvas(input, {
+			allowTaint: true,
+			logging: true,
+			taintTest: false,
+			// onrendered: save /*0.4.1*/,
+		}).then(canvas => {
+			let imgData = canvas.toDataURL("image/png");
+			// .replace("image/png", "image/octet-stream");
+			let doc = new jsPDF("p", "mm");
+			doc.addImage(imgData, "PNG", 10, 10);
+			doc.save("sample-file.pdf");
+
+			// downloadURL(imgData);
 		});
 	}
 
@@ -116,7 +214,7 @@ function Result() {
 				<main className="flex-grow">
 					<div className="pt-32 pb-12 md:pt-40 md:pb-20">
 						{/* Section header */}
-						<div className="text-center pb-12 md:pb-16">
+						<div className="text-center pb-12 md:pb-16" id="canvas">
 							<h1
 								className="text-5xl md:text-6xl font-extrabold leading-tighter tracking-tighter mb-4"
 								data-aos="zoom-y-out"
@@ -125,94 +223,85 @@ function Result() {
 									FinHealth score
 								</span>
 							</h1>
-							<div className="max-w-3xl mx-auto" id="canvas">
-								<ResponsiveChart
-									// className={"donut-chart-example"}
-									innerRadius={100}
-									radius={140}
-									getAngle={d => d.angle}
-									colorType="literal"
-									data={[
-										{
-											angle: Math.round(scores.reduce((x, y) => x + y, 0) / 8),
-
-											color: "rgb(121, 199, 227)",
-										},
-										{
-											angle:
-												100 - Math.round(scores.reduce((x, y) => x + y, 0) / 8),
-											color: "transparent",
-										},
-										// { angle: 2 },
-									]}
-									//onValueMouseOver={v => this.setState({value: v})}
-									// onSeriesMouseOut={v => this.setState({value: false})}
-									// width={400}
-									height={300}
-									padAngle={0.04}
-									showLabels={true}
-									// center={{ x: 400, y: 400 }}
-								>
-									<LabelSeries
+							<div className="max-w-3xl mx-auto">
+								{results ? (
+								<>
+									<ResponsiveChart
+										// className={"donut-chart-example"}
+										innerRadius={100}
+										radius={140}
+										getAngle={d => d.angle}
+										colorType="literal"
 										data={[
 											{
-												x: 0,
-												y: 0,
-												label: `${Math.round(
-													scores.reduce((x, y) => x + y, 0) / 8,
-												)}%`,
-												style: { textAnchor: "middle", color: "black", fontSize: "30px" },
+												angle: Math.round(
+													scores.reduce((x, y) => x + y.score, 0) / 8,
+												),
+												color: "rgb(121, 199, 227)",
 											},
+											{
+												angle:
+													100 -
+													Math.round(
+														scores.reduce((x, y) => x + y.score, 0) / 8,
+													),
+												color: "transparent",
+											},
+											// { angle: 2 },
 										]}
-									/>
-									{/* {value !== false && <Hint value={value} />} */}
-								</ResponsiveChart>
-
-								<button
-									// onClick={() => navigate("/Q2")}
-									onClick={() => score(answers, dispatch, setScores)}
-									type="button"
-									className="w-auto px-6 py-2 border-2 
-																border-[#d3d4d5] text-[#646464]-600  
-																text-xs leading-tight rounded-full hover:border-blue-500 hover:scale-125 focus:outline-none focus:ring-0 transition duration-500 ease-in-out"
-								>
-									calculate
-								</button>
-								<XYPlot width={700} height={300}>
-									<VerticalGridLines />
-									<HorizontalGridLines />
-									{/* <XAxis />
-									<YAxis /> */}
-									<HorizontalBarSeries
-										data={individualScores}
+										//onValueMouseOver={v => this.setState({value: v})}
+										// onSeriesMouseOut={v => this.setState({value: false})}
+										// width={400}
+										height={300}
+										padAngle={0.04}
 										showLabels={true}
-									/>
-									<LabelSeries
-										data={individualLabels}
-										getLabel={score => score.x}
-									/>
-
-									{/* <LabelSeries
-										data={individualValues}
-										getLabel={score => score.x}
-										labelAnchorX={100}
-										labelAnchorY={100}
-									/> */}
-								</XYPlot>
-								<button onClick={() => saveImage()}>Save</button>
-
-								<p>{`FinHealth Score ${Math.round(
-									scores.reduce((x, y) => x + y, 0) / 8,
-								)}`}</p>
-
-								<p>{`Spend Score ${Math.round(
-									(scores[0] + scores[1]) / 2,
-								)}`}</p>
-								<p>{`Save Score ${Math.round((scores[2] + scores[3]) / 2)}`}</p>
-								<p>{`Borrow Score ${Math.round(
-									(scores[4] + scores[5]) / 2,
-								)}`}</p>
-								<p>{`Plan Score ${Math.round((scores[6] + scores[7]) / 2)}`}</p>
+										// center={{ x: 400, y: 400 }}
+									>
+										<LabelSeries
+											data={[
+												{
+													x: 0,
+													y: 0,
+													label: `${Math.round(
+														scores.reduce((x, y) => x + y.score, 0) / 8,
+													)}%`,
+													style: {
+														textAnchor: "middle",
+														color: "black",
+														fontSize: "30px",
+													},
+												},
+											]}
+										/>
+										{/* {value !== false && <Hint value={value} />} */}
+									</ResponsiveChart>
+									<Bar options={options} data={data} />
+									<button onClick={() => saveImage()}>Save</button>
+									<p>{`FinHealth Score ${Math.round(
+										scores.reduce((x, y) => x + y.score, 0) / 8,
+									)}`}</p>
+									<p>{`Spend Score ${Math.round(
+										(scores[0] + scores[1]) / 2,
+									)}`}</p>
+									<p>{`Save Score ${Math.round(
+										(scores[2] + scores[3]) / 2,
+									)}`}</p>
+									<p>{`Borrow Score ${Math.round(
+										(scores[4] + scores[5]) / 2,
+									)}`}</p>
+									<p>{`Plan Score ${Math.round(
+										(scores[6] + scores[7]) / 2,
+									)}`}</p>
+								</>
+								) :<button
+									className="rounded"
+									onClick={() => {
+										score(answers, dispatch, setScores);
+										setResults(true);
+									}}
+								>
+									Click to view results
+								</button>}
 								{/* <svg viewBox="0 0 400 400" width="100%" height="100"> */}
 							</div>
 						</div>

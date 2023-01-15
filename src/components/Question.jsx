@@ -98,13 +98,14 @@ function Question() {
 																	});
 
 																	if (index == -1) {
-																		return dispatch(
+																		dispatch(
 																			setAnswers({
 																				location: location.pathname.charAt(1),
 																				answer: answer,
 																				i: index,
 																			}),
 																		);
+																		score(answers, dispatch, setScores);
 																	} else {
 																		dispatch(
 																			updateAnswers({
@@ -114,11 +115,11 @@ function Question() {
 																				i: index,
 																			}),
 																		);
+																		score(answers, dispatch, setScores);
+
 																	}
 
-																	if (location.pathname.charAt(1) == "8") {
-																		score(answers, dispatch, setScores);
-																	}
+																
 																} else {
 																	dispatch(
 																		setAnswers({
@@ -127,7 +128,12 @@ function Question() {
 																			i: i,
 																		}),
 																	);
+																	score(answers, dispatch, setScores);
+													
 																}
+
+																	// score(answers, dispatch, setScores);
+
 															}}
 														>
 															<button
@@ -204,7 +210,7 @@ function Question() {
 											let pro =
 												100 -
 												((8 - Number(location.pathname.charAt(1))) / 8) * 100;
-											// score(answers, dispatch, setScores);
+
 											dispatch(setProgress(pro));
 										}}
 									>
