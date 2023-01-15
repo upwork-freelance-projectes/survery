@@ -178,13 +178,15 @@ function Result() {
 			allowTaint: true,
 			logging: true,
 			taintTest: false,
-			scrollY: -window.scrollY,
+			height: window.outerHeight + window.innerHeight,
+			windowHeight: window.outerHeight + window.innerHeight,
+			// scrollY: -window.scrollY,
 			// scale: 5,
 			// onrendered: save /*0.4.1*/,
 		}).then(canvas => {
 			let imgData = canvas.toDataURL("image/png");
 			// .replace("image/png", "image/octet-stream");
-			let doc = new jsPDF();
+			let doc = new jsPDF("p");
 			// doc.addPage("png")
 			doc.addImage(imgData, "PNG", 10, 10);
 			doc.save("results-file.pdf");

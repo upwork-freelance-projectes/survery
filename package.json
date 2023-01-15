@@ -9,7 +9,8 @@
 		"build": "vite build",
 		"preview": "vite preview",
 		"pm2-setup": "pm2 deploy production setup",
-		"deploy": "pm2 deploy production"
+		"deploy": "pm2 deploy production",
+		"serverbuild": "vite build && rm -r /var/www/html/survey/* && cp -r dist/* /var/www/html/survey"
 	},
 	"dependencies": {
 		"@headlessui/react": "^1.7.7",

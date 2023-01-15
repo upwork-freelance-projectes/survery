@@ -3,7 +3,7 @@ import  { useNavigate, useLocation }from "react-router-dom"
 function Home() {
 	const navigate = useNavigate()
 	return (
-		<div className="flex flex-col min-h-screen overflow-hidden bg-gradient-to-r from-indigo-200 via-red-200 to-yellow-100">
+		<div className="flex flex-col min-h-screen overflow-hidden  bg-indigo-100">
 			<main className="flex-grow">
 				<div className="pt-32 pb-12 md:pt-40 md:pb-20">
 					{/* Section header */}
