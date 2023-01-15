@@ -59,7 +59,7 @@ function Question() {
 									<ul>
 										{question.answers ? (
 											question.answers.map((answer, i) => (
-												<li className="px-6 py-2 w-full 600" key={i}>
+												<li className="px-6 py-2" key={i}>
 													<div className="hover:scale-110 ">
 														<Link
 															to={
@@ -139,7 +139,7 @@ function Question() {
 															<button
 																// onClick={() => navigate("/Q2")}
 																type="button"
-																className="w-auto px-6 py-2 border-2 
+																className="px-6 py-2 border-2 w-60
 																border-[#d3d4d5] text-[#646464]-600  
 																text-xs leading-tight rounded-full hover:border-blue-500 hover:scale-125 focus:outline-none focus:ring-0 transition duration-500 ease-in-out"
 															>
