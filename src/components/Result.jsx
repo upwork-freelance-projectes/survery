@@ -2,7 +2,8 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { score } from "../scoring";
-import html2canvas from "html2canvas";
+import html2canvas from "html2canvas"
+import html2pdf from "html2pdf.js"
 import { BarChart } from "./Bar";
 import { setScores } from "../questionsSlice";
 import {
@@ -174,25 +175,33 @@ function Result() {
 
 	function saveImage() {
 		var input = document.getElementById("canvas");
-		html2canvas(input, {
-			allowTaint: true,
-			logging: true,
-			taintTest: false,
-			height: window.outerHeight + window.innerHeight,
-			windowHeight: window.outerHeight + window.innerHeight,
-			// scrollY: -window.scrollY,
-			// scale: 5,
-			// onrendered: save /*0.4.1*/,
-		}).then(canvas => {
-			let imgData = canvas.toDataURL("image/png");
-			// .replace("image/png", "image/octet-stream");
-			let doc = new jsPDF("p");
-			// doc.addPage("png")
-			doc.addImage(imgData, "PNG", 10, 10);
-			doc.save("results-file.pdf");
+		// html2canvas(input, {
+		// 	allowTaint: true,
+		// 	logging: true,
+		// 	taintTest: false,
+		// 	height: window.outerHeight + window.innerHeight,
+		// 	windowHeight: window.outerHeight + window.innerHeight,
+		// 	// scrollY: -window.scrollY,
+		// 	// scale: 5,
+		// 	// onrendered: save /*0.4.1*/,
+		// }).then(canvas => {
+		// 	let imgData = canvas.toDataURL("image/png",1.0);
+		// 	// .replace("image/png", "image/octet-stream");
+		// 	let doc = new jsPDF("p");
+		// 	// doc.addPage("png")
+		// 	doc.addImage(imgData, "PNG", 10, 10);
+		// 	doc.save("results-file.pdf");
 
-			// downloadURL(imgData);
-		});
+		// 	// downloadURL(imgData);
+		// });
+
+		var pdf = new jsPDF("p", "pt", "a3");
+
+		// Enable auto page wrap (there are still margin-top issues...)
+		// pdf.context2d.pageWrapY = pdf.internal.pageSize.height - 20;
+
+		html2pdf().from(input).save();
+		console.log('saved ...')
 	}
 
 	function downloadURL(imgData) {
