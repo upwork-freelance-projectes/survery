@@ -178,13 +178,16 @@ function Result() {
 			allowTaint: true,
 			logging: true,
 			taintTest: false,
+			scrollY: -window.scrollY,
+			// scale: 5,
 			// onrendered: save /*0.4.1*/,
 		}).then(canvas => {
 			let imgData = canvas.toDataURL("image/png");
 			// .replace("image/png", "image/octet-stream");
-			let doc = new jsPDF("p", "mm");
+			let doc = new jsPDF();
+			// doc.addPage("png")
 			doc.addImage(imgData, "PNG", 10, 10);
-			doc.save("sample-file.pdf");
+			doc.save("results-file.pdf");
 
 			// downloadURL(imgData);
 		});
@@ -210,11 +213,14 @@ function Result() {
 				</div>
 			</div>
 
-			<div className="flex flex-col min-h-screen overflow-hidden bg-indigo-100  ">
+			<div
+				className="flex flex-col min-h-screen overflow-hidden bg-indigo-100"
+				id="canvas"
+			>
 				<main className="flex-grow">
 					<div className="pt-32 pb-12 md:pt-40 md:pb-20">
 						{/* Section header */}
-						<div className="text-center pb-12 md:pb-16" id="canvas">
+						<div className="text-center pb-12 md:pb-16">
 							<h1
 								className="text-5xl md:text-6xl font-extrabold leading-tighter tracking-tighter mb-4"
 								data-aos="zoom-y-out"
@@ -225,83 +231,79 @@ function Result() {
 							</h1>
 							<div className="max-w-3xl mx-auto">
 								{results ? (
-								<>
-									<ResponsiveChart
-										// className={"donut-chart-example"}
-										innerRadius={100}
-										radius={140}
-										getAngle={d => d.angle}
-										colorType="literal"
-										data={[
-											{
-												angle: Math.round(
-													scores.reduce((x, y) => x + y.score, 0) / 8,
-												),
-												color: "rgb(121, 199, 227)",
-											},
-											{
-												angle:
-													100 -
-													Math.round(
-														scores.reduce((x, y) => x + y.score, 0) / 8,
-													),
-												color: "transparent",
-											},
-											// { angle: 2 },
-										]}
-										//onValueMouseOver={v => this.setState({value: v})}
-										// onSeriesMouseOut={v => this.setState({value: false})}
-										// width={400}
-										height={300}
-										padAngle={0.04}
-										showLabels={true}
-										// center={{ x: 400, y: 400 }}
-									>
-										<LabelSeries
+									<>
+										<ResponsiveChart
+											// className={"donut-chart-example"}
+											innerRadius={100}
+											radius={140}
+											getAngle={d => d.angle}
+											colorType="literal"
 											data={[
 												{
-													x: 0,
-													y: 0,
-													label: `${Math.round(
+													angle: Math.round(
 														scores.reduce((x, y) => x + y.score, 0) / 8,
-													)}%`,
-													style: {
-														textAnchor: "middle",
-														color: "black",
-														fontSize: "30px",
-													},
+													),
+													color: "rgb(121, 199, 227)",
 												},
+												{
+													angle:
+														100 -
+														Math.round(
+															scores.reduce((x, y) => x + y.score, 0) / 8,
+														),
+													color: "transparent",
+												},
+												// { angle: 2 },
 											]}
-										/>
-										{/* {value !== false && <Hint value={value} />} */}
-									</ResponsiveChart>
-									<Bar options={options} data={data} />
-									<button onClick={() => saveImage()}>Save</button>
-									<p>{`FinHealth Score ${Math.round(
-										scores.reduce((x, y) => x + y.score, 0) / 8,
-									)}`}</p>
-									<p>{`Spend Score ${Math.round(
-										(scores[0] + scores[1]) / 2,
-									)}`}</p>
-									<p>{`Save Score ${Math.round(
-										(scores[2] + scores[3]) / 2,
-									)}`}</p>
-									<p>{`Borrow Score ${Math.round(
-										(scores[4] + scores[5]) / 2,
-									)}`}</p>
-									<p>{`Plan Score ${Math.round(
-										(scores[6] + scores[7]) / 2,
-									)}`}</p>
-								</>
-								) :<button
-									className="rounded"
-									onClick={() => {
-										score(answers, dispatch, setScores);
-										setResults(true);
-									}}
-								>
-									Click to view results
-								</button>}
+											//onValueMouseOver={v => this.setState({value: v})}
+											// onSeriesMouseOut={v => this.setState({value: false})}
+											// width={400}
+											height={300}
+											padAngle={0.04}
+											showLabels={true}
+											// center={{ x: 400, y: 400 }}
+										>
+											<LabelSeries
+												data={[
+													{
+														x: 0,
+														y: 0,
+														label: `${Math.round(
+															scores.reduce((x, y) => x + y.score, 0) / 8,
+														)}%`,
+														style: {
+															textAnchor: "middle",
+															color: "black",
+															fontSize: "30px",
+														},
+													},
+												]}
+											/>
+											{/* {value !== false && <Hint value={value} />} */}
+										</ResponsiveChart>
+										<Bar options={options} data={data} />
+										<button
+											className="w-auto px-6 py-2 border-2 
+																border-[#d3d4d5] text-[#646464]-600  
+																text-xs leading-tight rounded-full hover:border-blue-500 hover:scale-125 focus:outline-none focus:ring-0 transition duration-500 ease-in-out"
+											 onClick={() => saveImage()}
+										>
+											Save Export Results
+										</button>
+									</>
+								) : (
+									<button
+										className="w-auto px-6 py-2 border-2 
+																border-[#d3d4d5] text-[#646464]-600  
+																text-xs leading-tight rounded-full hover:border-blue-500 hover:scale-125 focus:outline-none focus:ring-0 transition duration-500 ease-in-out"
+										onClick={() => {
+											score(answers, dispatch, setScores);
+											setResults(true);
+										}}
+									>
+										Click to view results
+									</button>
+								)}
 								{/* <svg viewBox="0 0 400 400" width="100%" height="100"> */}
 							</div>
 						</div>
