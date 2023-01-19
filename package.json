@@ -10,6 +10,7 @@
 		"preview": "vite preview",
 		"pm2-setup": "pm2 deploy production setup",
 		"deploy": "pm2 deploy production",
+		"start": "serve -s build",
 		"serve": "rm -r /var/www/html/survey/* && cp -r dist/* /var/www/html/survey"
 	},
 	"dependencies": {
@@ -30,7 +31,8 @@
 		"react-router-dom": "^6.6.1",
 		"react-virtualized": "^9.22.3",
 		"react-vis": "^1.11.12",
-		"redux-persist": "^6.0.0"
+		"redux-persist": "^6.0.0",
+		"serve": "^13.0.2"
 	},
 	"devDependencies": {
 		"@tailwindcss/aspect-ratio": "^0.4.2",
