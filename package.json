@@ -32,7 +32,9 @@
 		"react-virtualized": "^9.22.3",
 		"react-vis": "^1.11.12",
 		"redux-persist": "^6.0.0",
-		"serve": "^13.0.2"
+		"serve": "^13.0.2",
+		"vite": "^4.0.0",
+		"@vitejs/plugin-react": "^3.0.0"
 	},
 	"devDependencies": {
 		"@tailwindcss/aspect-ratio": "^0.4.2",
